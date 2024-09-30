@@ -25,8 +25,12 @@
 </repositories>
 
 <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
+<maven.compiler.target>1.8</maven.compiler.target>
+<maven.compiler.source>1.8</maven.compiler.source>
+<sonar.organization>kepamiriamsi2</sonar.organization>
+<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+<sonar.projectKey>kepamiriamsi2_rides24si</sonar.projectKey>
+<sonar.login>6df843df2845846ae38565fd8939fcee53b2b137</sonar.login>
 </properties>
 
 <!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -87,6 +91,12 @@
 			<artifactId>jta</artifactId>
 			<version>1.1</version>
 		</dependency>	
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.4.0</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
     		<groupId>org.mockito</groupId>
    			 <artifactId>mockito-inline</artifactId>
