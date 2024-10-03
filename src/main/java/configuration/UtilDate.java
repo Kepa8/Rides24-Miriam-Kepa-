@@ -6,7 +6,9 @@ import java.util.TimeZone;
 
 public class UtilDate {
 
-	
+	private UtilDate() {
+	    throw new IllegalStateException("Utility class");
+	  }
 	public static Date trim(Date date) {
 
 		Calendar calendar = Calendar.getInstance();
