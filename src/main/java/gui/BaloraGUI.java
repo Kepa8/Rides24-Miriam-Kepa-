@@ -17,7 +17,7 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
-
+import javax.swing.SwingConstants;
 public class BaloraGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -46,8 +46,7 @@ public class BaloraGUI extends JFrame {
 		User us = appFacadeInterface.getUser(username);
 
 		lbltxt = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("BaloraGUI.Izena") + ": " + username);
-
-		slider = new JSlider(JSlider.HORIZONTAL, 1, 5, 1);
+		slider = new JSlider(SwingConstants.HORIZONTAL, 1, 5, 1);
 		slider.setForeground(new Color(100, 100, 100));
 		slider.setMinorTickSpacing(1);
 		slider.setMajorTickSpacing(1);
