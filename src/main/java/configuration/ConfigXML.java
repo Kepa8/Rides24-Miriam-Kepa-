@@ -95,10 +95,6 @@ public class ConfigXML {
 			  
 			  locale = getTagValue("locale", config);
 
-			  
-			  
-				
-
 			  initDbFilename(config);
 
 				//Two possible values: true (no instance of RemoteServer needs to be launched) or false (RemoteServer needs to be run first)
