@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,33 +33,31 @@ public class DataAccess {
 	private static final String REJ = "Rejected";
 	private static final String BF = "BookFreeze";
 	private static final String US = "username";
+	private static final String QUERY_DRIVER_BY_USERNAME = "SELECT d FROM Driver d WHERE d.username = :username";
 	ConfigXML c = ConfigXML.getInstance();
-	
+	private static final Logger logger = Logger.getLogger(DataAccess.class.getName());
 	private String adminPass="admin";
 
 	public DataAccess() {
 		if (c.isDatabaseInitialized()) {
 			String fileName = c.getDbFilename();
-
 			File fileToDelete = new File(fileName);
-			if (fileToDelete.delete()) {
-				File fileToDeleteTemp = new File(fileName + "$");
-				fileToDeleteTemp.delete();
-
-				System.out.println("File deleted");
-			} else {
-				System.out.println("Operation failed");
-			}
-		}
-		open();
-		if (c.isDatabaseInitialized()) {
-			initializeDB();
-		}
-
-		System.out.println("DataAccess created => isDatabaseLocal: " + c.isDatabaseLocal() + " isDatabaseInitialized: "
-				+ c.isDatabaseInitialized());
-
-		close();
+            boolean isDeleted = fileToDelete.delete();
+            if (isDeleted) {
+                File fileToDeleteTemp = new File(fileName + "$");
+                boolean isTempDeleted = fileToDeleteTemp.delete();
+                if (isTempDeleted) {
+                    logger.info("Main file and temporary file deleted successfully.");
+                } else {
+                    logger.warning("Main file deleted, but failed to delete temporary file.");
+                }
+            } else {
+                logger.warning("Failed to delete the database file.");
+            }
+        }
+		String fileName = c.getDbFilename();
+        emf = Persistence.createEntityManagerFactory("objectdb:" + fileName);
+        db = emf.createEntityManager();
 
 	}
 	//This constructor is used to mock the DB
@@ -172,13 +171,12 @@ public class DataAccess {
 			db.persist(c2);
 			db.persist(c3);
 
-			//db.persist(a1);
 
 			Discount dis = new Discount("Uda24", 0.2, true);
 			db.persist(dis);
 
 			db.getTransaction().commit();
-			System.out.println("Db initialized");
+			logger.info("Db initialized");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -193,9 +191,7 @@ public class DataAccess {
 	 */
 	public List<String> getDepartCities() {
 		TypedQuery<String> query = db.createQuery("SELECT DISTINCT r.from FROM Ride r ORDER BY r.from", String.class);
-		List<String> cities = query.getResultList();
-		return cities;
-
+		return query.getResultList();
 	}
 
 	/**
@@ -209,9 +205,7 @@ public class DataAccess {
 		TypedQuery<String> query = db.createQuery("SELECT DISTINCT r.to FROM Ride r WHERE r.from=?1 ORDER BY r.to",
 				String.class);
 		query.setParameter(1, from);
-		List<String> arrivingCities = query.getResultList();
-		return arrivingCities;
-
+		return query.getResultList();
 	}
 
 	/**
@@ -230,12 +224,12 @@ public class DataAccess {
 	 */
 	public Ride createRide(String from, String to, Date date, int nPlaces, float price, String driverName)
 			throws RideAlreadyExistException, RideMustBeLaterThanTodayException {
-		System.out.println(
-				">> DataAccess: createRide=> from= " + from + " to= " + to + " driver=" + driverName + " date " + date);
+		logger.info(
+		">> DataAccess: createRide=> from= " + from + " to= " + to + " driver=" + driverName + " date " + date);
 		if (driverName==null) return null;
 		try {
 			if (new Date().compareTo(date) > 0) {
-				System.out.println("ppppp");
+				logger.info("ppppp");
 				throw new RideMustBeLaterThanTodayException(
 						ResourceBundle.getBundle("Etiquetas").getString("CreateRideGUI.ErrorRideMustBeLaterThanToday"));
 			}
@@ -268,7 +262,7 @@ public class DataAccess {
 	 * @return collection of rides
 	 */
 	public List<Ride> getRides(String from, String to, Date date) {
-		System.out.println(">> DataAccess: getActiveRides=> from= " + from + " to= " + to + " date " + date);
+		logger.info(">> DataAccess: getActiveRides=> from= " + from + " to= " + to + " date " + date);
 
 		List<Ride> res = new ArrayList<>();
 		TypedQuery<Ride> query = db.createQuery(
@@ -293,7 +287,7 @@ public class DataAccess {
 	 * @return collection of rides
 	 */
 	public List<Date> getThisMonthDatesWithRides(String from, String to, Date date) {
-		System.out.println(">> DataAccess: getThisMonthActiveRideDates");
+		logger.info(">> DataAccess: getThisMonthActiveRideDates");
 
 		List<Date> res = new ArrayList<>();
 
@@ -329,13 +323,13 @@ public class DataAccess {
 					"objectdb://" + c.getDatabaseNode() + ":" + c.getDatabasePort() + "/" + fileName, properties);
 			db = emf.createEntityManager();
 		}
-		System.out.println("DataAccess opened => isDatabaseLocal: " + c.isDatabaseLocal());
+		logger.info("DataAccess opened => isDatabaseLocal: " + c.isDatabaseLocal());
 
 	}
 
 	public void close() {
 		db.close();
-		System.out.println("DataAcess closed");
+		logger.info("DataAcess closed");
 	}
 
 	public User getUser(String erab) {
@@ -369,10 +363,7 @@ public class DataAccess {
 		driverQuery.setParameter("passwd", passwd);
 		Long driverCount = driverQuery.getSingleResult();
 
-		/*TypedQuery<Long> adminQuery = db.createQuery(
-		adminQuery.setParameter("username", erab);
-		adminQuery.setParameter("passwd", passwd);
-		Long adminCount = adminQuery.getSingleResult();*/
+		
 
 		boolean isAdmin=((erab.compareTo("admin")==0) && (passwd.compareTo(adminPass)==0));
 		return travelerCount > 0 || driverCount > 0 || isAdmin;
@@ -380,7 +371,7 @@ public class DataAccess {
 
 	public Driver getDriver(String erab) {
 		
-		TypedQuery<Driver> query = db.createQuery("SELECT d FROM Driver d WHERE d.username = :username", Driver.class);
+		TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME, Driver.class);
 		query.setParameter(US, erab);
 		List<Driver> resultList = query.getResultList();
 		if (resultList.isEmpty()) {
@@ -402,17 +393,6 @@ public class DataAccess {
 		}
 	}
 
-	/*
-		TypedQuery<Admin> query = db.createQuery("SELECT a FROM Admin a WHERE t.username = :username", Admin.class);
-		query.setParameter("username", erab);
-		List<Admin> resultList = query.getResultList();
-		if (resultList.isEmpty()) {
-			return null;
-		} else {
-			return resultList.get(0);
-		}
-	}*/
-
 	public String getMotabyUsername(String erab) {
 		TypedQuery<String> driverQuery = db.createQuery("SELECT d.mota FROM Driver d WHERE d.username = :username",
 				String.class);
@@ -425,8 +405,7 @@ public class DataAccess {
 		List<String> travelerResultList = travelerQuery.getResultList();
 
 		/*TypedQuery<String> adminQuery = db.createQuery("SELECT a.mota FROM Admin a WHERE a.username = :username",
-		adminQuery.setParameter("username", erab);
-		List<String> adminResultList = adminQuery.getResultList();*/
+		*/
 
 		if (!driverResultList.isEmpty()) {
 			return driverResultList.get(0);
@@ -625,7 +604,7 @@ public class DataAccess {
 	public List<Booking> getBookingFromDriver(String username) {
 		try {
 			db.getTransaction().begin();
-			TypedQuery<Driver> query = db.createQuery("SELECT d FROM Driver d WHERE d.username = :username",
+			TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME,
 					Driver.class);
 			query.setParameter(US, username);
 			Driver driver = query.getSingleResult();
@@ -684,7 +663,7 @@ public class DataAccess {
 	public List<Ride> getRidesByDriver(String username) {
 		try {
 			db.getTransaction().begin();
-			TypedQuery<Driver> query = db.createQuery("SELECT d FROM Driver d WHERE d.username = :username",
+			TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME,
 					Driver.class);
 			query.setParameter(US, username);
 			Driver driver = query.getSingleResult();

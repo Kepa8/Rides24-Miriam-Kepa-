@@ -1,9 +1,10 @@
 package domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
+
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,15 +22,16 @@ public class Driver extends User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@XmlIDREF
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Car> cars = new Vector<Car>();;
+	private List<Car> cars = new ArrayList<Car>();
 	@XmlIDREF
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Ride> createdRides = new Vector<Ride>();
+	private List<Ride> createdRides = new ArrayList<Ride>();
 
 	public Driver(String username, String passwd) {
 		super(username, passwd, "Driver");
 	}
-
+	
+	@Override
 	public String toString() {
 		return (super.toString());
 	}
@@ -88,15 +90,14 @@ public class Driver extends User implements Serializable {
 
 	}
 
+	
 	public Ride removeRide(String from, String to, Date date) {
 		Ride r=null;
 		int pos=0;
 		int index=0;
 		boolean encontrado=false;
 		for (Ride ride : createdRides) {
-			//if (ride.getFrom().equals(from) && ride.getTo().equals(to) && ride.getDate().equals(date)) {
-			if ((ride.getFrom()==from) && (ride.getTo()==to) && (ride.getDate().equals(date))) {
-
+			if (ride.getFrom().equals(from) && ride.getTo().equals(to) && ride.getDate().equals(date)) {
 				encontrado=true;
 				pos=index;
 			}

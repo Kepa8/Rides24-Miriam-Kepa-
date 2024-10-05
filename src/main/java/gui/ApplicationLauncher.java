@@ -7,10 +7,10 @@ import javax.swing.UIManager;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import businesslogic.BLFacade;
+import businesslogic.BLFacadeImplementation;
 import configuration.ConfigXML;
 import dataAccess.DataAccess;
-import businessLogic.BLFacade;
-import businessLogic.BLFacadeImplementation;
 
 public class ApplicationLauncher {
 
@@ -45,7 +45,7 @@ public class ApplicationLauncher {
 
 				// 1st argument refers to wsdl document above
 				// 2nd argument is service name, refer to wsdl document above
-				QName qname = new QName("http://businessLogic/", "BLFacadeImplementationService");
+				QName qname = new QName("http://businesslogic/", "BLFacadeImplementationService");
 
 				Service service = Service.create(url, qname);
 

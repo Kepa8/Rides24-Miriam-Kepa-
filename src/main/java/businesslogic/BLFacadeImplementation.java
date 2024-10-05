@@ -1,4 +1,4 @@
-package businessLogic;
+package businesslogic;
 
 import java.util.Date;
 import java.util.List;
@@ -25,7 +25,7 @@ import exceptions.RideAlreadyExistException;
 /**
  * It implements the business logic as a web service.
  */
-@WebService(endpointInterface = "businessLogic.BLFacade")
+@WebService(endpointInterface = "businesslogic.BLFacade")
 public class BLFacadeImplementation implements BLFacade {
 	DataAccess dbManager;
 	public BLFacadeImplementation() {

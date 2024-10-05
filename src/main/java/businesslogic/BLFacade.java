@@ -1,14 +1,9 @@
-package businessLogic;
-
+package businesslogic;
 import java.util.Date;
-
 import java.util.List;
-
-//import domain.Booking;
 import domain.Ride;
 import domain.Traveler;
 import domain.User;
-//import domain.Admin;
 import domain.Alert;
 import domain.Booking;
 import domain.Car;
@@ -18,7 +13,6 @@ import domain.Complaint;
 import domain.Movement;
 import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.RideAlreadyExistException;
-
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
@@ -105,8 +99,6 @@ public interface BLFacade {
 	public Driver getDriver(String erab);
 
 	public Traveler getTraveler(String erab);
-
-	//public Admin getAdmin(String erab);
 
 	public String getMotaByUsername(String erab);
 

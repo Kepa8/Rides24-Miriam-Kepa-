@@ -1,7 +1,7 @@
 /**
  * Package with the business logic of the application.
  */
-package businessLogic;
+package businesslogic;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -11,14 +11,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import configuration.ConfigXML;
-
 import javax.swing.JTextArea;
 import javax.xml.ws.Endpoint;
-
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -40,7 +35,7 @@ public class BusinessLogicServer extends JDialog {
 	public static void main(String[] args) {
 		try {
 			BusinessLogicServer dialog = new BusinessLogicServer();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,14 +66,9 @@ public class BusinessLogicServer extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						textArea.append("\n\n\nClosing the server... ");
-					    
-							//server.close();
-						
-						System.exit(1);
-					}
+				okButton.addActionListener((ActionEvent e) -> {
+				    textArea.append("\n\n\nClosing the server... ");
+				    System.exit(1);
 				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);

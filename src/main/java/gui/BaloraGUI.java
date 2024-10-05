@@ -10,7 +10,6 @@ import java.awt.Rectangle;
 
 import javax.swing.JSlider;
 
-import businessLogic.BLFacade;
 import domain.User;
 
 import java.awt.Color;
@@ -18,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+
+import businesslogic.BLFacade;
 public class BaloraGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
