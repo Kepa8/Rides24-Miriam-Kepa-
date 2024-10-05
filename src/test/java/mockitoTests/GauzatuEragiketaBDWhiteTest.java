@@ -6,6 +6,6 @@ package mockitoTests;
 /**
  * 
  */
-public class gauzatuEragiketaBDWhiteTest {
+public class GauzatuEragiketaBDWhiteTest {
 
 }

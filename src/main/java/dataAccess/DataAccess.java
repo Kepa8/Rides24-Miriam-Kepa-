@@ -64,7 +64,7 @@ public class DataAccess {
 	public DataAccess(EntityManager db) {
 		this.db = db;
 	}
-
+ 
 	/**
 	 * This is the data access method that initializes the database with some events
 	 * and questions. This method is invoked by the business logic (constructor of
@@ -470,7 +470,7 @@ public class DataAccess {
 						user.setMoney(0);
 					else
 						user.setMoney(currentMoney - amount);
-				}
+		 		}
 				db.merge(user);
 				db.getTransaction().commit();
 				return true;

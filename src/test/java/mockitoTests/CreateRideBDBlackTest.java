@@ -92,7 +92,7 @@ public class CreateRideBDBlackTest {
 		   }
 	
 	
-	
+	 
 	
 	@Test
 	//sut.createRide:  The ride "from" is null. The test must return null. If  an Exception is returned the createRide method is not well implemented.

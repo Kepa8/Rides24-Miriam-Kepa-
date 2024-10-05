@@ -30,7 +30,7 @@ import exceptions.RideMustBeLaterThanTodayException;
 
 public class CreateRideMockBlackTest {
 	
-	static DataAccess sut;
+	static DataAccess sut; 
 	
 	protected MockedStatic<Persistence> persistenceMock;
 
@@ -57,7 +57,6 @@ public class CreateRideMockBlackTest {
     public  void tearDown() {
 		persistenceMock.close();
     }
-	
 	
 	Driver driver;
 	
