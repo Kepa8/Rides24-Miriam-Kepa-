@@ -31,7 +31,7 @@ public class Driver extends User implements Serializable {
 		super(username, passwd, "Driver");
 	}
 	
-	@Override
+	@Override 
 	public String toString() {
 		return (super.toString());
 	}
@@ -90,7 +90,11 @@ public class Driver extends User implements Serializable {
 
 	}
 
-	
+	@Override
+	  public int hashCode() {
+	    return 0;
+	  }
+
 	public Ride removeRide(String from, String to, Date date) {
 		Ride r=null;
 		int pos=0;

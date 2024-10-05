@@ -35,7 +35,7 @@ public class User implements Serializable {
 		this.money = 0;
 		this.balorazioa = 0;
 		this.izoztatutakoDirua = 0;
-		this.balkop = 0;
+		this.balkop = 0; 
 		this.erreklamaKop = 0;
 	}
 
@@ -120,5 +120,9 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
+	@Override
+	  public int hashCode() {
+	    return 0;
+	  }
 
 }

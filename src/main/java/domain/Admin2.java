@@ -29,7 +29,7 @@ public class Admin2 implements Serializable {
 
 	public String getUsername() {
 		return username;
-	}
+	} 
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -56,6 +56,10 @@ public class Admin2 implements Serializable {
 			return false;
 		return true;
 	}
+	@Override
+	  public int hashCode() {
+	    return 0;
+	  }
 
 	public String getMota() {
 		return mota;
