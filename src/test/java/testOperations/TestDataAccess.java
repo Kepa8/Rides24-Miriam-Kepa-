@@ -7,10 +7,12 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 import configuration.ConfigXML;
 import domain.Driver;
 import domain.Ride;
+import domain.User;
 
 
 public class TestDataAccess {
@@ -158,6 +160,37 @@ public class TestDataAccess {
 	            db.getTransaction().commit();
 	            
 	            close();
+	    }
+		
+		public User createUser(String username, String password, String mota) {
+		    db.getTransaction().begin();
+		    User user = new User(username, password, mota);
+		    db.persist(user);
+		    db.getTransaction().commit();
+		    return user;
+		}
+
+		public User findUser(String username) {
+		    return db.find(User.class, username);
+		}
+		
+		public EntityManager getEntityManager() {
+	        return db;
+	    }
+		public void updateUserMoney(String username, double money) {
+	        db.getTransaction().begin();
+	        User user = findUser(username);
+	        if (user != null) {
+	            user.setMoney(money);
+	            db.merge(user);
+	        }
+	        db.getTransaction().commit();
+	    }
+		public void removeAllUsers() {
+	        db.getTransaction().begin();
+	        Query query = db.createQuery("DELETE FROM User");
+	        query.executeUpdate();
+	        db.getTransaction().commit();
 	    }
 		
 }

@@ -122,4 +122,5 @@ public class GauzatuEragiketaBDBlackTest {
         // Verificación: la operación debe fallar ya que el usuario no existe
         assertFalse(result);
     }
+    
 }
