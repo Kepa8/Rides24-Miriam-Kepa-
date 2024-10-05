@@ -37,7 +37,7 @@ public class CreateRideMockBlackTest {
 	@Mock
 	protected  EntityManagerFactory entityManagerFactory;
 	@Mock
-	protected  EntityManager db;
+	protected  EntityManager db; 
 	@Mock
     protected  EntityTransaction  et;
 	

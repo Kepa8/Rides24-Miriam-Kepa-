@@ -32,7 +32,7 @@ public class Traveler extends User implements Serializable {
 		super(username, passwd, "Traveler");
 	}
 
-	public List<Booking> getBookedRides() {
+	public List<Booking> getBookedRides() { 
 		return bookedRides;
 	}
 

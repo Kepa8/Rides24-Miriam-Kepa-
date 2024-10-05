@@ -18,10 +18,10 @@ public class TestDataAccess {
 	protected  EntityManagerFactory emf;
 
 	ConfigXML  c=ConfigXML.getInstance();
-
+ 
 
 	public TestDataAccess()  {
-		
+		 
 		System.out.println("TestDataAccess created");
 
 		//open();
@@ -133,6 +133,31 @@ public class TestDataAccess {
 			return null; 
 		}
 
+		public void removeAll() {
+	        System.out.println(">> TestDataAccess: removeAll");
 
+	        if (db == null || !db.isOpen()) {
+	            open(); 
+	        }
+
+
+	            db.createQuery("DELETE FROM Driver").executeUpdate();
+
+	            db.createQuery("DELETE FROM Traveler").executeUpdate();
+
+	            db.createQuery("DELETE FROM Ride").executeUpdate();
+
+	            db.createQuery("DELETE FROM Booking").executeUpdate();
+
+	            db.createQuery("DELETE FROM Car").executeUpdate();
+
+	            db.createQuery("DELETE FROM Movement").executeUpdate();
+
+	            db.createQuery("DELETE FROM Discount").executeUpdate();
+
+	            db.getTransaction().commit();
+	            
+	            close();
+	    }
 		
 }

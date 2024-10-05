@@ -250,7 +250,6 @@ public class DataAccess {
 		} catch (NullPointerException e) {
 			return null;
 		}
-		
 	}
 
 	/**
