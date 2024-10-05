@@ -42,29 +42,18 @@ public class GauzatuEragiketaMockWhiteTest {
 
     @Test
     public void testExceptionHandling() {
-        // Redirigir la salida de error
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
 
         try {
-            // Simular una excepción al configurar los parámetros
             when(query.setParameter(anyString(), anyString())).thenThrow(new RuntimeException("Database error"));
-
-            // Ejecutar la operación
             boolean result = sut.gauzatuEragiketa("testUser", 50, true);
-
-            // Verificar que la transacción comenzó y fue revertida
             verify(et).begin();
             verify(et).rollback();
-
-            // Verificar que no se realizó el merge
             verify(db, never()).merge(any());
-
-            // Asegurarse de que la función retornó false
             assertFalse(result);
 
         } finally {
-            // Restaurar el flujo de error a su valor original
             System.setErr(System.err);
         }
     }
