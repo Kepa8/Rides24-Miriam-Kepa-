@@ -31,13 +31,14 @@ public class GauzatuEragiketaBDWhiteTest {
         String username = "testUser1";
         testDA.createUser(username, "password", "mota");
         testDA.updateUserMoney(username, 100.0);
-        // Act
-        boolean result = sut.gauzatuEragiketa(username, 50, true);
-
-        // Assert
-        assertTrue(result);
-        User updatedUser = testDA.findUser(username);
-        assertEquals(150.0, updatedUser.getMoney(), 0.01);
+        try {
+        	boolean result = sut.gauzatuEragiketa(username, 50, true);
+        	assertTrue(result);
+        	User updatedUser = testDA.findUser(username);
+        	assertEquals(150.0, updatedUser.getMoney(), 0.01);
+        }catch(Exception e) {
+        	fail();
+        }
     }
 
     @Test
@@ -46,13 +47,14 @@ public class GauzatuEragiketaBDWhiteTest {
         String username = "testUser2";
         testDA.createUser(username, "password", "mota");
         testDA.updateUserMoney(username, 100.0);
-        // Act
-        boolean result = sut.gauzatuEragiketa(username, 30, false);
-
-        // Assert
-        assertTrue(result);
-        User updatedUser = testDA.findUser(username);
-        assertEquals(70.0, updatedUser.getMoney(), 0.01);
+        try {
+        	boolean result = sut.gauzatuEragiketa(username, 30, false);
+        	assertTrue(result);
+        	User updatedUser = testDA.findUser(username);
+        	assertEquals(70.0, updatedUser.getMoney(), 0.01);
+        }catch(Exception e) {
+        	fail();
+        }
     }
 
     @Test
@@ -61,18 +63,20 @@ public class GauzatuEragiketaBDWhiteTest {
         String username = "testUser3";
         testDA.createUser(username, "password", "mota");
         testDA.updateUserMoney(username, 10.0);
-        // Act
-        boolean result = sut.gauzatuEragiketa(username, 30, false);
-
-        // Assert
-        assertTrue(result);
-        User updatedUser = testDA.findUser(username);
-        assertEquals(0.0, updatedUser.getMoney(), 0.01);//
+        try {
+        	boolean result = sut.gauzatuEragiketa(username, 30, false);
+        	assertTrue(result);
+        	User updatedUser = testDA.findUser(username);
+        	assertEquals(0.0, updatedUser.getMoney(), 0.01);
+    	}catch(Exception e) {
+    		fail();
+    	}
     }
 
     @Test
     public void testUserNotFound() {
         boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
         assertFalse(result);
-    }
+    } 
+    
 }

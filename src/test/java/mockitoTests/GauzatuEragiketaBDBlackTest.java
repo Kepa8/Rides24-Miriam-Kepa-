@@ -22,10 +22,8 @@ public class GauzatuEragiketaBDBlackTest {
 
     @Mock
     private EntityManager db;
-
     @Mock
     private EntityTransaction et;
-
     @Mock
     private TypedQuery<User> query;
 
@@ -38,78 +36,74 @@ public class GauzatuEragiketaBDBlackTest {
 
     @Test
     public void testDepositSuccess() {
-        // Arrange
         User mockedUser = mock(User.class);
         when(query.setParameter(eq("username"), anyString())).thenReturn(query);
         when(query.getSingleResult()).thenReturn(mockedUser);
         when(mockedUser.getMoney()).thenReturn(100.0);
 
-        // Act
-        boolean result = sut.gauzatuEragiketa("testUser", 50, true);
-
-        // Assert
-        verify(et).begin();
-        verify(mockedUser).setMoney(150.0);
-        verify(db).merge(mockedUser);
-        verify(et).commit();
-
-        assertTrue(result);
+        try {
+        	boolean result = sut.gauzatuEragiketa("testUser1", 50, true);
+	        verify(et).begin();
+	        verify(mockedUser).setMoney(150.0);
+	        verify(db).merge(mockedUser);
+	        verify(et).commit();
+	        assertTrue(result);
+        }catch(Exception e) {
+        	fail();
+        }
     }
 
     @Test
     public void testWithdrawSuccess() {
-        // Arrange
         User mockedUser = mock(User.class);
         when(query.setParameter(eq("username"), anyString())).thenReturn(query);
         when(query.getSingleResult()).thenReturn(mockedUser);
         when(mockedUser.getMoney()).thenReturn(100.0);
 
-        // Act
-        boolean result = sut.gauzatuEragiketa("testUser", 30, false);
-
-        // Assert
-        verify(et).begin();
-        verify(mockedUser).setMoney(70.0);
-        verify(db).merge(mockedUser);
-        verify(et).commit();
-
-        assertTrue(result);
+      try {
+	        boolean result = sut.gauzatuEragiketa("testUser2", 30, false);
+	        verify(et).begin();
+	        verify(mockedUser).setMoney(70.0);
+	        verify(db).merge(mockedUser);
+	        verify(et).commit();
+	
+	        assertTrue(result);
+	    }catch(Exception e) {
+	    	fail();
+	    }
     }
 
     @Test
     public void testWithdrawMoreThanBalance() {
-        // Arrange
         User mockedUser = mock(User.class);
         when(query.setParameter(eq("username"), anyString())).thenReturn(query);
         when(query.getSingleResult()).thenReturn(mockedUser);
         when(mockedUser.getMoney()).thenReturn(20.0);
 
-        // Act
-        boolean result = sut.gauzatuEragiketa("testUser", 50, false);
-
-        // Assert
-        verify(et).begin();
-        verify(mockedUser).setMoney(0.0);
-        verify(db).merge(mockedUser);
-        verify(et).commit();
-
-        assertTrue(result);
+        try {
+	        boolean result = sut.gauzatuEragiketa("testUser3", 50, false);
+	        verify(et).begin();
+	        verify(mockedUser).setMoney(0.0);
+	        verify(db).merge(mockedUser);
+	        verify(et).commit();
+	        assertTrue(result);
+	    }catch(Exception e) {
+	    	fail();
+	    }
     }
 
     @Test
     public void testUserNotFound() {
-        // Arrange
         when(query.setParameter(eq("username"), anyString())).thenReturn(query);
         when(query.getSingleResult()).thenReturn(null);
-
-        // Act
-        boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
-
-        // Assert
-        verify(et).begin();
-        verify(et).commit();
-        verify(db, never()).merge(any(User.class));
-
-        assertFalse(result);
+        try {
+	        boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
+	        verify(et).begin();
+	        verify(et).commit();
+	        verify(db, never()).merge(any(User.class));
+	        assertFalse(result);
+		}catch(Exception e) {
+			fail();
+		}
     }
 }

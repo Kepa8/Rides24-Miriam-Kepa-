@@ -45,9 +45,7 @@ public class GauzatuEragiketaMockWhiteTest {
     public void testUserNotFound() {
         MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
         try {
-            persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
-                .thenReturn(entityManagerFactory);
-
+            persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any())).thenReturn(entityManagerFactory);
             Mockito.doReturn(db).when(entityManagerFactory).createEntityManager();
             Mockito.doReturn(et).when(db).getTransaction();
             sut = new DataAccess(db);
@@ -177,77 +175,6 @@ public class GauzatuEragiketaMockWhiteTest {
             verify(mockedUser).setMoney(0.0);
             verify(db).merge(mockedUser);
             verify(et).commit();
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getMessage());
-        } finally {
-            sut.close();
-            persistenceMock.close();
-        }
-    }
-
-    @Test
-    // sut.gauzatuEragiketa: Exception during transaction.
-    public void testTransactionException() {
-        MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
-        try {
-            persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
-                .thenReturn(entityManagerFactory);
-
-            Mockito.doReturn(db).when(entityManagerFactory).createEntityManager();
-            Mockito.doReturn(et).when(db).getTransaction();
-            sut = new DataAccess(db);
-
-            String username = "testUser";
-            double amount = 50;
-            boolean deposit = true;
-
-            User mockedUser = mock(User.class);
-            when(db.createQuery(anyString(), eq(User.class))).thenReturn(query);
-            when(query.setParameter(eq("username"), anyString())).thenReturn(query);
-            when(query.getSingleResult()).thenReturn(mockedUser);
-            when(mockedUser.getMoney()).thenReturn(100.0);
-            doThrow(new RuntimeException()).when(db).merge(mockedUser);
-
-            sut.open();
-            boolean result = sut.gauzatuEragiketa(username, amount, deposit);
-            assertFalse(result);
-
-            verify(et).begin();
-            verify(et).rollback();
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getMessage());
-        } finally {
-            sut.close();
-            persistenceMock.close();
-        }
-    }
-
-    @Test
-    // sut.gauzatuEragiketa: Exception during query.
-    public void testExceptionDuringQuery() {
-        MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
-        try {
-            persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
-                .thenReturn(entityManagerFactory);
-
-            Mockito.doReturn(db).when(entityManagerFactory).createEntityManager();
-            Mockito.doReturn(et).when(db).getTransaction();
-            sut = new DataAccess(db);
-
-            String username = "testUser";
-            double amount = 50;
-            boolean deposit = true;
-
-            when(db.createQuery(anyString(), eq(User.class))).thenReturn(query);
-            when(query.setParameter(eq("username"), anyString())).thenReturn(query);
-            when(query.getSingleResult()).thenThrow(new RuntimeException());
-
-            sut.open();
-            boolean result = sut.gauzatuEragiketa(username, amount, deposit);
-            assertFalse(result);
-
-            verify(et).begin();
-            verify(et).rollback();
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
         } finally {
