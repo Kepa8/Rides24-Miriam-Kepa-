@@ -1,141 +1,155 @@
 package mockitoTests;
 
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import dataAccess.DataAccess;
-import domain.Driver;
-import domain.Ride;
-import domain.Traveler;
-import domain.User;
+import domain.*;
+import testOperations.TestDataAccess;
 
 public class BookRideMockWhiteTest {
 
-    @InjectMocks
-    private DataAccess sut;  // System under test (DataAccess)
+    DataAccess sut; 
+    TestDataAccess testDataAccess;
+    MockedStatic<Persistence> persistenceMock;
+    AutoCloseable closeable;
 
     @Mock
-    private EntityManager db;  // Mock del EntityManager
-
+    EntityManagerFactory entityManagerFactory;
     @Mock
-    private EntityTransaction et;  // Mock de EntityTransaction
-
+    EntityManager db; 
     @Mock
-    private TypedQuery<User> query;  // Mock de una query para encontrar el viajero
+    EntityTransaction et;
+    @Mock
+    TypedQuery<Traveler> query;
 
-    @SuppressWarnings("deprecation")
-	@Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    @Before
+    public void init() {
+        closeable = MockitoAnnotations.openMocks(this);
         
-        // Configura el EntityManager y el EntityTransaction
+        persistenceMock = mockStatic(Persistence.class);
+        persistenceMock.when(() -> Persistence.createEntityManagerFactory(any()))
+            .thenReturn(entityManagerFactory);
+        
+        when(entityManagerFactory.createEntityManager()).thenReturn(db);
         when(db.getTransaction()).thenReturn(et);
+        when(db.createQuery(anyString(), eq(Traveler.class))).thenReturn(query);
         
-        // Mockea la consulta TypedQuery
-        when(db.createNamedQuery("User.getTravelerByUsername", User.class)).thenReturn(query);
+        doNothing().when(et).begin();
+        doNothing().when(et).commit();
+        doNothing().when(et).rollback();
         
-        // Configura el comportamiento de setParameter y otros métodos
-        when(query.setParameter(anyString(), any())).thenReturn(query); // Simulamos que devuelve el propio query para que se puedan encadenar llamadas.
-        when(query.getSingleResult()).thenReturn(mock(User.class)); // Simula un usuario como resultado
+        sut = new DataAccess(db);
+        testDataAccess = new TestDataAccess();
+        testDataAccess.setEntityManager(db);
+    }
+
+    @After
+    public void closeAll() throws Exception {
+        persistenceMock.close();
+        closeable.close();
     }
 
     @Test
-    public void testBookRide_TravelerNotExists() {
-        // Simulamos que el viajero no existe en la base de datos
-        when(db.find(Traveler.class, "nonexistentUser")).thenReturn(null);
+    public void testBookRideSuccess() {
+        // Setup
+        String username = "testUser1";
+        Driver driver = new Driver("driverUser1", "passwd");
+        Ride ride = new Ride("from", "to", new Date(), 5, 20.0, driver);
+        int seats = 2;
+        double desk = 5.0;
 
-        // Creamos un Driver para el Ride (puede ser un mock)
-        Driver driver = mock(Driver.class);
+        Traveler mockedTraveler = new Traveler(username, "password");
+        mockedTraveler.setMoney(100.0);
+        
+        when(query.getResultList()).thenReturn(Collections.singletonList(mockedTraveler));
+        when(query.setParameter(anyString(), any())).thenReturn(query);
+        when(db.find(eq(Traveler.class), eq(username))).thenReturn(mockedTraveler);
 
-        // Creamos una Ride usando el constructor que requiere parámetros
-        Ride ride = new Ride("Madrid", "Barcelona", new Date(), 5, 20, driver);
+        // Execute
+        boolean result = sut.bookRide(username, ride, seats, desk);
 
-        // Ejecutamos el método y verificamos el resultado
-        boolean result = sut.bookRide("nonexistentUser", ride, 1, 0);
-        assertFalse(result); //ESTA MAL
+        // Verify
+        assertTrue("bookRide should return true", result);
+        assertEquals("Ride should have 3 places left", 3, ride.getnPlaces());
+        assertEquals("Traveler should have 70.0 money left", 70.0, mockedTraveler.getMoney(), 0.01);
+        assertEquals("Traveler should have 30.0 frozen money", 30.0, mockedTraveler.getIzoztatutakoDirua(), 0.01);
 
-        // Verificamos que no se haya iniciado una transacción
-        verify(et, never()).begin();
+        verify(db).persist(any(Booking.class));
+        verify(db).merge(ride);
+        verify(db).merge(mockedTraveler);
+        verify(et).begin();
+        verify(et).commit();
     }
 
     @Test
-    public void testBookRide_NotEnoughSeats() {
-        // Creamos un viajero existente usando el constructor que requiere username y passwd
-        Traveler traveler = new Traveler("existentUser", "password123");
+    public void testBookRideNoTraveler() {
+        String username = "nonExistentUser";
+        Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
+        
+        when(query.getResultList()).thenReturn(Collections.emptyList());
 
-        // Creamos un Driver para el Ride (puede ser un mock)
-        Driver driver = mock(Driver.class);
+        boolean result = sut.bookRide(username, ride, 2, 5.0);
 
-        // Creamos una Ride usando el constructor que requiere parámetros
-        Ride ride = new Ride("Madrid", "Barcelona", new Date(), 1, 10, driver);  // Solo 1 asiento disponible
-
-        when(db.find(Traveler.class, "existentUser")).thenReturn(traveler);
-
-        // Ejecutamos el método y verificamos el resultado
-        boolean result = sut.bookRide("existentUser", ride, 5, 0);  // Pedimos más asientos de los disponibles
         assertFalse(result);
-
-        // Verificamos que no se haya persistido ni hecho merge en la base de datos
-        verify(db, never()).persist(any());
-        verify(db, never()).merge(any());
+        verify(et, never()).commit();
     }
 
     @Test
-    public void testBookRide_NotEnoughMoney() {
-        // Creamos un viajero con dinero insuficiente
-        Traveler traveler = new Traveler("existentUser", "password123");
-        traveler.setMoney(10);  // Dinero insuficiente
+    public void testBookRideNotEnoughSeats() {
+        String username = "testUser";
+        Traveler traveler = new Traveler(username, "pass");
+        traveler.setMoney(100.0);
+        Ride ride = new Ride("from", "to", new Date(), 1, 20.0, new Driver("driver", "pass"));
+        
+        when(query.getResultList()).thenReturn(Arrays.asList(traveler));
 
-        // Creamos un Driver para el Ride (puede ser un mock)
-        Driver driver = mock(Driver.class);
+        boolean result = sut.bookRide(username, ride, 2, 5.0);
 
-        // Creamos una Ride con suficientes asientos y precio alto
-        Ride ride = new Ride("Madrid", "Barcelona", new Date(), 5, 100, driver);  // Precio elevado
-
-        when(db.find(Traveler.class, "existentUser")).thenReturn(traveler);
-
-        // Ejecutamos el método y verificamos el resultado
-        boolean result = sut.bookRide("existentUser", ride, 2, 0);  // No tiene suficiente dinero
         assertFalse(result);
-
-        // Verificamos que no se haya persistido ni hecho merge en la base de datos
-        verify(db, never()).persist(any());
-        verify(db, never()).merge(any());
+        verify(et, never()).commit();
     }
 
     @Test
-    public void testBookRide_SuccessfulBooking() {
-        // Creamos un viajero con suficiente dinero
-        Traveler traveler = new Traveler("existentUser", "password123");
-        traveler.setMoney(500);  // Dinero suficiente
+    public void testBookRideInsufficientMoney() {
+        String username = "testUser";
+        Traveler traveler = new Traveler(username, "pass");
+        traveler.setMoney(10.0);
+        Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
+        
+        when(query.getResultList()).thenReturn(Arrays.asList(traveler));
 
-        // Creamos un Driver para el Ride (puede ser un mock)
-        Driver driver = mock(Driver.class);
+        boolean result = sut.bookRide(username, ride, 2, 5.0);
 
-        // Creamos una Ride con suficientes asientos y precio razonable
-        Ride ride = new Ride("Madrid", "Barcelona", new Date(), 5, 50, driver);  // Precio razonable
+        assertFalse(result);
+        verify(et, never()).commit();
+    }
 
-        when(db.find(Traveler.class, "existentUser")).thenReturn(traveler);
+    @Test
+    public void testBookRideExceptionHandling() {
+        String username = "testUser";
+        Traveler traveler = new Traveler(username, "pass");
+        traveler.setMoney(100.0);
+        Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
+        
+        when(query.getResultList()).thenReturn(Arrays.asList(traveler));
+        doThrow(new RuntimeException("DB Error")).when(db).persist(any(Booking.class));
 
-        // Ejecutamos el método y verificamos el resultado
-        boolean result = sut.bookRide("existentUser", ride, 2, 10);
-        assertTrue(result);
+        boolean result = sut.bookRide(username, ride, 2, 5.0);
 
-        // Verificamos que los métodos de persistencia se llaman correctamente
-        verify(db).persist(any());  // Debe persistir la reserva
-        verify(db).merge(any(Ride.class));  // Debe hacer merge de la ride
-        verify(db).merge(any(Traveler.class));  // Debe hacer merge del traveler
-        verify(et).commit();  // La transacción debe ser committeada
+        assertFalse(result);
+        verify(et).rollback();
     }
 }

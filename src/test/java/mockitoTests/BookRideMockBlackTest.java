@@ -160,10 +160,22 @@ public class BookRideMockBlackTest {
         // Assert
         assertFalse(result);
     }
+    
+    @Test
+    public void testBookRideNoTraveler() {
+        String username = "nonExistentUser";
+        Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
+        
+        when(query.getResultList()).thenReturn(Collections.emptyList());
 
+        boolean result = sut.bookRide(username, ride, 2, 5.0);
+
+        assertFalse(result);
+        verify(et, never()).commit();
+    }
     @Test
     // sut.bookRide: Saldo insuficiente.
-    public void testBookRideInsufficientBalance() {
+    public void testBookRideInsufficientMoney() {
         String username = "testUser4";
         Driver driver = new Driver("driverUser4", "passwd");
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, driver);
