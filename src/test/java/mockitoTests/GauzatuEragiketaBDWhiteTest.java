@@ -26,7 +26,7 @@ public class GauzatuEragiketaBDWhiteTest {
         testDA.close();
     }
     @Test
-    public void testDepositSuccess() {
+    public void test1() {
         // Arrange
         String username = "testUser1";
         testDA.createUser(username, "password", "mota");
@@ -42,7 +42,7 @@ public class GauzatuEragiketaBDWhiteTest {
     }
 
     @Test
-    public void testWithdrawSuccess() {
+    public void test2() {
         // Arrange
         String username = "testUser2";
         testDA.createUser(username, "password", "mota");
@@ -58,7 +58,7 @@ public class GauzatuEragiketaBDWhiteTest {
     }
 
     @Test
-    public void testWithdrawInsufficientFunds() {
+    public void test3() {
         // Arrange
         String username = "testUser3";
         testDA.createUser(username, "password", "mota");
@@ -74,7 +74,7 @@ public class GauzatuEragiketaBDWhiteTest {
     }
 
     @Test
-    public void testUserNotFound() {
+    public void test4() {
         boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
         assertFalse(result);
     } 

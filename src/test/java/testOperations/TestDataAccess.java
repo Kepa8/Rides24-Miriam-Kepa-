@@ -6,12 +6,15 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import configuration.ConfigXML;
+import domain.Booking;
 import domain.Driver;
 import domain.Ride;
+import domain.Traveler;
 import domain.User;
 
 
@@ -25,17 +28,11 @@ public class TestDataAccess {
 	public TestDataAccess()  {
 		 
 		System.out.println("TestDataAccess created");
-
 		//open();
-		
 	}
 
-	
 	public void open(){
-		
-
 		String fileName=c.getDbFilename();
-		
 		if (c.isDatabaseLocal()) {
 			  emf = Persistence.createEntityManagerFactory("objectdb:"+fileName);
 			  db = emf.createEntityManager();
@@ -49,9 +46,8 @@ public class TestDataAccess {
 			  db = emf.createEntityManager();
     	   }
 		System.out.println("TestDataAccess opened");
-
-		
 	}
+	
 	public void close(){
 		db.close();
 		System.out.println("TestDataAccess closed");
@@ -68,6 +64,7 @@ public class TestDataAccess {
 		} else 
 		return false;
     }
+	
 	public Driver createDriver(String name, String pass) {
 		System.out.println(">> TestDataAccess: addDriver");
 		Driver driver=null;
@@ -82,10 +79,9 @@ public class TestDataAccess {
 			}
 			return driver;
     }
+	
 	public boolean existDriver(String email) {
-		 return  db.find(Driver.class, email)!=null;
-		 
-
+		 return  db.find(Driver.class, email)!=null;	 
 	}
 		
 		public Driver addDriverWithRide(String name, String from, String to,  Date date, int nPlaces, float price) {
@@ -134,24 +130,6 @@ public class TestDataAccess {
 			} else 
 			return null; 
 		}
-
-		public void removeAll() {
-	        System.out.println(">> TestDataAccess: removeAll");
-
-	        if (db == null || !db.isOpen()) {
-	            open(); 
-	        }
-
-	            db.createQuery("DELETE FROM Driver").executeUpdate();
-	            db.createQuery("DELETE FROM Traveler").executeUpdate();
-	            db.createQuery("DELETE FROM Ride").executeUpdate();
-	            db.createQuery("DELETE FROM Booking").executeUpdate();
-	            db.createQuery("DELETE FROM Car").executeUpdate();
-	            db.createQuery("DELETE FROM Movement").executeUpdate();
-	            db.createQuery("DELETE FROM Discount").executeUpdate();
-	            db.getTransaction().commit();
-	            close();
-	    }
 		
 		public User createUser(String username, String password, String mota) {
 		    db.getTransaction().begin();
@@ -192,5 +170,52 @@ public class TestDataAccess {
 	        db.persist(user);
 	        db.getTransaction().commit();
 	    }
+		
+		public void removeAll() {
+		    System.out.println(">> TestDataAccess: removeAll");
+
+		    if (db == null || !db.isOpen()) {
+		        open();
+		    }
+
+		    db.getTransaction().begin();
+		    db.createQuery("DELETE FROM Booking").executeUpdate();
+		    db.createQuery("DELETE FROM Ride").executeUpdate();
+		    db.createQuery("DELETE FROM Driver").executeUpdate();
+		    db.createQuery("DELETE FROM Traveler").executeUpdate();
+		    db.createQuery("DELETE FROM User").executeUpdate();
+		    db.createQuery("DELETE FROM Car").executeUpdate();
+		    db.createQuery("DELETE FROM Movement").executeUpdate();
+		    db.createQuery("DELETE FROM Discount").executeUpdate();
+		    db.getTransaction().commit();
+		    
+		    long count = (long) db.createQuery("SELECT COUNT(u) FROM User u").getSingleResult();
+		    System.out.println("Number of users after deletion: " + count);
+		}
+		
+		public Ride createRide(Ride ride) {
+		    db.getTransaction().begin();
+		    db.persist(ride);
+		    db.getTransaction().commit();
+		    return ride;
+		}
+
+		public Booking findBooking(Ride ride, Traveler traveler) {
+		    
+		        return db.createQuery("SELECT b FROM Booking b WHERE b.ride = :ride AND b.traveler = :traveler", Booking.class)
+		                 .setParameter("ride", ride)
+		                 .setParameter("traveler", traveler)
+		                 .getSingleResult();
+		    
+		}
+		
+		public Ride getRide(String username, String origin, String destination, Date date) {
+		    return (Ride) db.createQuery("SELECT r FROM Ride r WHERE r.driver.username = :username AND r.origin = :origin AND r.destination = :destination AND r.date = :date")
+		            .setParameter("username", username)
+		            .setParameter("origin", origin)
+		            .setParameter("destination", destination)
+		            .setParameter("date", date)
+		            .getSingleResult();
+		}
 		
 }

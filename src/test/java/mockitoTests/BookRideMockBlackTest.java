@@ -64,7 +64,7 @@ public class BookRideMockBlackTest {
     }
     
     @Test
-    public void testBookRideSuccess() {
+    public void test1() {
         String username = "testUser1";
         Driver driver = new Driver("driverUser1", "passwd");
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, driver);
@@ -109,7 +109,7 @@ public class BookRideMockBlackTest {
 
     @Test
     // sut.bookRide: Usuario no encontrado.
-    public void testBookRideUserNotFound() {
+    public void test2() {
         String username = "nonExistentUser";
         Driver driver = new Driver("driverUser2", "passwd");
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, driver);
@@ -134,7 +134,7 @@ public class BookRideMockBlackTest {
 
     @Test
     // sut.bookRide: No hay suficientes asientos.
-    public void testBookRideNotEnoughSeats() {
+    public void test3() {
         String username = "testUser2";
         Driver driver = new Driver("driverUser3", "passwd");
         Ride ride = new Ride("from", "to", new Date(), 1, 20.0, driver);
@@ -162,7 +162,7 @@ public class BookRideMockBlackTest {
     }
     
     @Test
-    public void testBookRideNoTraveler() {
+    public void test4() {
         String username = "nonExistentUser";
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
         
@@ -175,7 +175,7 @@ public class BookRideMockBlackTest {
     }
     @Test
     // sut.bookRide: Saldo insuficiente.
-    public void testBookRideInsufficientMoney() {
+    public void test5() {
         String username = "testUser4";
         Driver driver = new Driver("driverUser4", "passwd");
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, driver);

@@ -61,7 +61,7 @@ public class BookRideMockWhiteTest {
     }
 
     @Test
-    public void testBookRideSuccess() {
+    public void test1() {
         // Setup
         String username = "testUser1";
         Driver driver = new Driver("driverUser1", "passwd");
@@ -93,7 +93,7 @@ public class BookRideMockWhiteTest {
     }
 
     @Test
-    public void testBookRideNoTraveler() {
+    public void test2() {
         String username = "nonExistentUser";
         Ride ride = new Ride("from", "to", new Date(), 5, 20.0, new Driver("driver", "pass"));
         
@@ -106,7 +106,7 @@ public class BookRideMockWhiteTest {
     }
 
     @Test
-    public void testBookRideNotEnoughSeats() {
+    public void test3() {
         String username = "testUser";
         Traveler traveler = new Traveler(username, "pass");
         traveler.setMoney(100.0);
@@ -121,7 +121,7 @@ public class BookRideMockWhiteTest {
     }
 
     @Test
-    public void testBookRideInsufficientMoney() {
+    public void test4() {
         String username = "testUser";
         Traveler traveler = new Traveler(username, "pass");
         traveler.setMoney(10.0);
@@ -136,7 +136,7 @@ public class BookRideMockWhiteTest {
     }
 
     @Test
-    public void testBookRideExceptionHandling() {
+    public void test5() {
         String username = "testUser";
         Traveler traveler = new Traveler(username, "pass");
         traveler.setMoney(100.0);

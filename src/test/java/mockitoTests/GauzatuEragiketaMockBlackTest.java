@@ -58,7 +58,7 @@ public class GauzatuEragiketaMockBlackTest {
 
     @Test
     // sut.gauzatuEragiketa: Deposit money successfully.
-    public void testDepositSuccess() {
+    public void test1() {
         String username = "testUser";
         double amount = 50;
         boolean deposit = true;
@@ -86,7 +86,7 @@ public class GauzatuEragiketaMockBlackTest {
 
     @Test
     // sut.gauzatuEragiketa: Withdraw money successfully with sufficient balance.
-    public void testWithdrawSuccess() {
+    public void test2() {
         // Arrange
         String username = "testUser";
         double amount = 30;
@@ -116,7 +116,7 @@ public class GauzatuEragiketaMockBlackTest {
 
     @Test
     // sut.gauzatuEragiketa: Withdraw money with insufficient balance.
-    public void testWithdrawMoreThanBalance() {
+    public void test3() {
         // Arrange
         String username = "testUser";
         double amount = 50;
@@ -146,7 +146,7 @@ public class GauzatuEragiketaMockBlackTest {
 
     @Test
     // sut.gauzatuEragiketa: The user does not exist in the DB. The test must return false.
-    public void testUserNotFound() {
+    public void test4() {
         // Arrange
         String username = "nonExistentUser";
         double amount = 50;

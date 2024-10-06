@@ -121,8 +121,9 @@ public class User implements Serializable {
 		return true;
 	}
 	@Override
-	  public int hashCode() {
-	    return 0;
-	  }
+	public int hashCode() {
+	    return username != null ? username.hashCode() : 0;
+	}
+
 
 }

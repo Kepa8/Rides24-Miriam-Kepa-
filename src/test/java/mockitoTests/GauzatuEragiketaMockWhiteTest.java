@@ -42,7 +42,7 @@ public class GauzatuEragiketaMockWhiteTest {
 
     @Test
     // sut.gauzatuEragiketa: The user does not exist in the DB. The test must return false.
-    public void testUserNotFound() {
+    public void test1() {
         MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
         try {
             persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any())).thenReturn(entityManagerFactory);
@@ -71,7 +71,7 @@ public class GauzatuEragiketaMockWhiteTest {
 
     @Test
     // sut.gauzatuEragiketa: Deposit money successfully.
-    public void testDepositSuccess() {
+    public void test2() {
         MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
         try {
             persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
@@ -109,7 +109,7 @@ public class GauzatuEragiketaMockWhiteTest {
 
     @Test
     // sut.gauzatuEragiketa: Withdraw money successfully with sufficient balance.
-    public void testWithdrawSuccess() {
+    public void test3() {
         MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
         try {
             persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
@@ -147,7 +147,7 @@ public class GauzatuEragiketaMockWhiteTest {
 
     @Test
     // sut.gauzatuEragiketa: Withdraw money with insufficient balance.
-    public void testWithdrawMoreBalance() {
+    public void test4() {
         MockedStatic<Persistence> persistenceMock = Mockito.mockStatic(Persistence.class);
         try {
             persistenceMock.when(() -> Persistence.createEntityManagerFactory(Mockito.any()))
