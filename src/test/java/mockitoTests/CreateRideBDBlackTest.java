@@ -28,7 +28,7 @@ public class CreateRideBDBlackTest {
 	 //additional operations needed to execute the test 
 	 static TestDataAccess testDA=new TestDataAccess();
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused") 
 	private Driver driver; 
 
 	@Test

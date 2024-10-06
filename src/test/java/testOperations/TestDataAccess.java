@@ -142,23 +142,14 @@ public class TestDataAccess {
 	            open(); 
 	        }
 
-
 	            db.createQuery("DELETE FROM Driver").executeUpdate();
-
 	            db.createQuery("DELETE FROM Traveler").executeUpdate();
-
 	            db.createQuery("DELETE FROM Ride").executeUpdate();
-
 	            db.createQuery("DELETE FROM Booking").executeUpdate();
-
 	            db.createQuery("DELETE FROM Car").executeUpdate();
-
 	            db.createQuery("DELETE FROM Movement").executeUpdate();
-
 	            db.createQuery("DELETE FROM Discount").executeUpdate();
-
 	            db.getTransaction().commit();
-	            
 	            close();
 	    }
 		
@@ -177,6 +168,9 @@ public class TestDataAccess {
 		public EntityManager getEntityManager() {
 	        return db;
 	    }
+		public void setEntityManager(EntityManager entityManager) {
+		    this.db = entityManager;
+		}
 		public void updateUserMoney(String username, double money) {
 	        db.getTransaction().begin();
 	        User user = findUser(username);
@@ -186,10 +180,16 @@ public class TestDataAccess {
 	        }
 	        db.getTransaction().commit();
 	    }
+		
 		public void removeAllUsers() {
 	        db.getTransaction().begin();
 	        Query query = db.createQuery("DELETE FROM User");
 	        query.executeUpdate();
+	        db.getTransaction().commit();
+	    }
+		public void saveUser(User user) {
+	        db.getTransaction().begin();
+	        db.persist(user);
 	        db.getTransaction().commit();
 	    }
 		

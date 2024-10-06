@@ -72,13 +72,7 @@ public class GauzatuEragiketaBDWhiteTest {
 
     @Test
     public void testUserNotFound() {
-        try {
-        	boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
-
-        	// Assert
-        	assertFalse(result);
-        } catch (javax.persistence.NoResultException e) {
-            assertFalse(false);
-        }
+        boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
+        assertFalse(result);
     }
 }
