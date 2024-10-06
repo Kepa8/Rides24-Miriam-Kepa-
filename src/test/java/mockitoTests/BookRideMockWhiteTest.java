@@ -3,7 +3,6 @@ package mockitoTests;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-
 import javax.persistence.*;
 import org.junit.After;
 import org.junit.Before;
@@ -11,7 +10,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
