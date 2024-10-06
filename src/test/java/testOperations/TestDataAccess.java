@@ -91,7 +91,7 @@ public class TestDataAccess {
 				try {
 					 driver = db.find(Driver.class, name);
 					if (driver==null) {
-						System.out.println("Entra en null");
+						System.out.println("Null da");
 						driver=new Driver(name,null);
 				    	db.persist(driver);
 					}
