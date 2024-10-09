@@ -37,7 +37,6 @@ public class BookRideBDBlackTest {
 
     @Test
     public void test1() {
-        // Arrange
         testDA.open();
         String driverName = "driver1";
         Date date = new Date();
@@ -67,7 +66,6 @@ public class BookRideBDBlackTest {
     
     @Test
     public void test2() {
-        // Arrange
         testDA.open();    
         String driverIdentifier = "driver2";
         Date date = new Date();
@@ -89,16 +87,13 @@ public class BookRideBDBlackTest {
         
         testDA.close();
         
-        // Act
         boolean result = sut.bookRide(username, ride, 2, 5.0);
-        
-        // Assert
+     
         assertFalse("Booking should fail due to insufficient seats", result);
     }
     
     @Test
     public void test3() {
-        // Arrange
         testDA.open();
         
         String driverName = "driver3";
@@ -116,17 +111,14 @@ public class BookRideBDBlackTest {
         
         testDA.close();
         
-        // Act
         String nonExistentUser = "nonexistentUser";
         boolean result = sut.bookRide(nonExistentUser, ride, 2, 5.0);
         
-        // Assert
         assertFalse("Booking should fail due to non-existent user", result);
     }
     
     @Test
     public void test4() {
-        // Arrange
         testDA.open();
         
         String driverName = "driver4";
@@ -149,10 +141,8 @@ public class BookRideBDBlackTest {
         
         testDA.close();
         
-        // Act
         boolean result = sut.bookRide(username, ride, 2, 5.0);
         
-        // Assert
         assertFalse("Booking should fail due to insufficient money", result);
     }
 }
