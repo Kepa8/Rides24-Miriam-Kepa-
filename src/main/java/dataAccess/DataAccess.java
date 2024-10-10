@@ -528,7 +528,17 @@ public class DataAccess {
 			db.merge(traveler);
 			db.getTransaction().commit();
 			return true;
-		} catch (Exception e) {
+		} 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		catch (Exception e) {
 			e.printStackTrace();
 			db.getTransaction().rollback();
 			return false;

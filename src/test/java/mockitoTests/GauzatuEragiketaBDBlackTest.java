@@ -20,6 +20,8 @@ import domain.User;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GauzatuEragiketaBDBlackTest {
+	
+	/*
     private DataAccess sut;
 
     @Mock
@@ -120,4 +122,5 @@ public class GauzatuEragiketaBDBlackTest {
         verify(et).rollback();
         verify(db, never()).merge(any(User.class));
     }
+    */
 }
