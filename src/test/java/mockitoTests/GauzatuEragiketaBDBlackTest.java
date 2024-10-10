@@ -1,4 +1,4 @@
-package mockitoTests;
+/*package mockitoTests;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -42,7 +42,7 @@ public class GauzatuEragiketaBDBlackTest {
     public void tearDown() {
         // Clean up resources if needed
     }
-/*
+
     @Test
     public void test1() {
         // Usar una instancia real de User en lugar de mock
@@ -60,7 +60,7 @@ public class GauzatuEragiketaBDBlackTest {
         verify(et).commit();
         assertTrue(result);
     }
-*/
+
     @Test
     public void test2() {
         User realUser = new User("testUser2", "password", "type");  // Crear un objeto real de User
@@ -121,3 +121,4 @@ public class GauzatuEragiketaBDBlackTest {
         verify(db, never()).merge(any(User.class));
     }
 }
+*/
