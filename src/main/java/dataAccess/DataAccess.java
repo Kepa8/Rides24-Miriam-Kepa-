@@ -512,7 +512,7 @@ public class DataAccess {
 			double ridePriceDesk = (ride.getPrice() - desk) * seats;
 			double availableBalance = traveler.getMoney();
 			if (availableBalance < ridePriceDesk) {
-				return false;
+				return false; 
 			}
 
 			Booking booking = new Booking(ride, traveler, seats);

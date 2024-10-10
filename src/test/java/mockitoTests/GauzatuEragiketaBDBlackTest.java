@@ -1,4 +1,4 @@
-/*package mockitoTests;
+package mockitoTests;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -121,4 +121,3 @@ public class GauzatuEragiketaBDBlackTest {
         verify(db, never()).merge(any(User.class));
     }
 }
-*/

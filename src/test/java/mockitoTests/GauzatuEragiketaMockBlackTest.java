@@ -1,4 +1,4 @@
-/*package mockitoTests;
+package mockitoTests;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -171,4 +171,3 @@ public class GauzatuEragiketaMockBlackTest {
         assertFalse(result);
     }
 }
-*/
