@@ -10,7 +10,7 @@ import domain.User;
 import testOperations.TestDataAccess;
 
 public class GauzatuEragiketaBDWhiteTest {
-	/*
+
     private DataAccess sut;
     private TestDataAccess testDA;
 
@@ -79,5 +79,5 @@ public class GauzatuEragiketaBDWhiteTest {
         boolean result = sut.gauzatuEragiketa("nonExistentUser", 50, true);
         assertFalse(result);
     } 
-    */
+
 }

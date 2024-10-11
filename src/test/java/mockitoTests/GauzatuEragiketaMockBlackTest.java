@@ -22,7 +22,6 @@ import domain.User;
 import testOperations.TestDataAccess;
 
 public class GauzatuEragiketaMockBlackTest {
-    /*
     static DataAccess sut; 
     static TestDataAccess testDataAccess;
     protected MockedStatic<Persistence> persistenceMock;
@@ -170,5 +169,4 @@ public class GauzatuEragiketaMockBlackTest {
         // Assert
         assertFalse(result);
     }
-    */
 }

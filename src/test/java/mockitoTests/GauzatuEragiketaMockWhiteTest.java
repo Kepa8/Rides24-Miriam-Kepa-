@@ -20,7 +20,7 @@ import dataAccess.DataAccess;
 import domain.User;
 
 public class GauzatuEragiketaMockWhiteTest {
-	/*
+	
     // sut: system under test
     private DataAccess sut;
 
@@ -183,5 +183,4 @@ public class GauzatuEragiketaMockWhiteTest {
             persistenceMock.close();
         }
     }
-    */
 }
