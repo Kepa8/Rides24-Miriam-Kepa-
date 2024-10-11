@@ -457,31 +457,32 @@ public class DataAccess {
 	}
 
 	public boolean gauzatuEragiketa(String username, double amount, boolean deposit) {
-		try {
-			db.getTransaction().begin();
-			User user = getUser(username);
-			if (user != null) {
-				double currentMoney = user.getMoney();
-				if (deposit) {
-					user.setMoney(currentMoney + amount);
-				} else {
-					if ((currentMoney - amount) < 0)
-						user.setMoney(0);
-					else
-						user.setMoney(currentMoney - amount);
-		 		}
-				db.merge(user);
-				db.getTransaction().commit();
-				return true;
-			}
-			db.getTransaction().commit();
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			db.getTransaction().rollback();
-			return false;
-		}
+	    try {
+	        db.getTransaction().begin();
+	        User user = getUser(username);
+	        if (user != null) {
+	            updateUserMoney(user, amount, deposit);
+	            db.merge(user);
+	            db.getTransaction().commit();
+	            return true;
+	        }
+	        db.getTransaction().commit();
+	        return false;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        db.getTransaction().rollback();
+	        return false;
+	    }
 	}
+	private void updateUserMoney(User user, double amount, boolean deposit) {
+	    double currentMoney = user.getMoney();
+	    if (deposit) {
+	        user.setMoney(currentMoney + amount);
+	    } else {
+	        user.setMoney(Math.max(0, currentMoney - amount));
+	    }
+	}
+
 
 	public void addMovement(User user, String eragiketa, double amount) {
 		try {
@@ -639,35 +640,37 @@ public class DataAccess {
 	public void cancelRide(Ride ride) {
 		try {
 			db.getTransaction().begin();
-
 			for (Booking booking : ride.getBookings()) {
 				if (booking.getStatus().equals(ACC) || booking.getStatus().equals("NotDefined")) {
-					double price = booking.prezioaKalkulatu();
-					Traveler traveler = booking.getTraveler();
-					double frozenMoney = traveler.getIzoztatutakoDirua();
-					traveler.setIzoztatutakoDirua(frozenMoney - price);
-
-					double money = traveler.getMoney();
-					traveler.setMoney(money + price);
-					db.merge(traveler);
-					db.getTransaction().commit();
-					addMovement(traveler, "BookDeny", price);
-					db.getTransaction().begin();
+					refundTraveler(booking);
 				}
 				booking.setStatus(REJ);
 				db.merge(booking);
 			}
 			ride.setActive(false);
 			db.merge(ride);
-
 			db.getTransaction().commit();
-		} catch (Exception e) {
-			if (db.getTransaction().isActive()) {
-				db.getTransaction().rollback();
-			}
+			} catch (Exception e) {
+			   if (db.getTransaction().isActive()){db.getTransaction().rollback();}
 			e.printStackTrace();
 		}
 	}
+	private void refundTraveler(Booking booking) {
+		double price = booking.prezioaKalkulatu();
+		Traveler traveler = booking.getTraveler();
+		 traveler.setIzoztatutakoDirua(traveler.getIzoztatutakoDirua() - price);
+		 traveler.setMoney(traveler.getMoney() + price);
+		 db.merge(traveler);
+		 boolean currentTransactionActive = db.getTransaction().isActive();
+		 if (currentTransactionActive) {
+		     db.getTransaction().commit();
+		 }
+		 addMovement(traveler, "BookDeny", price);
+		 if (currentTransactionActive) {
+		     db.getTransaction().begin();
+		 }
+	}
+
 
 	public List<Ride> getRidesByDriver(String username) {
 		try {
@@ -723,12 +726,11 @@ public class DataAccess {
 		return era;
 	}
 
-	public boolean erreklamazioaBidali(String nor, String nori, Date gaur, Booking booking, String textua,
-			boolean aurk) {
+	public boolean erreklamazioaBidali(ErreklamazioaBidaliInfo parameterObject, Booking booking, boolean aurk) {
 		try {
 			db.getTransaction().begin();
 
-			Complaint erreklamazioa = new Complaint(nor, nori, gaur, booking, textua, aurk);
+			Complaint erreklamazioa = new Complaint(parameterObject.nor, parameterObject.nori, parameterObject.gaur, booking, parameterObject.textua, aurk);
 			db.persist(erreklamazioa);
 			db.getTransaction().commit();
 			return true;
