@@ -23,12 +23,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import dataAccess.DataAccess;
+import dataAccess.RideDetails;
 import domain.Driver;
 import domain.Ride;
 import exceptions.RideAlreadyExistException;
 import exceptions.RideMustBeLaterThanTodayException;
 
 public class CreateRideMockWhiteTest {
+	DataAccess dbManager;
+
 	
 	static DataAccess sut;
 	
@@ -88,7 +91,11 @@ public class CreateRideMockWhiteTest {
 				
 				//invoke System Under Test (sut)  
 				sut.open();
-				Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUserName);
+				
+				//Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUserName);
+			    dbManager.open();
+			    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+			    Ride ride = dbManager.createRide(rideDetails, driverUserName);
 
 				//verify the results
 				assertNull(ride);
@@ -142,7 +149,10 @@ public class CreateRideMockWhiteTest {
 			
 	      //invoke System Under Test (sut)  
 			sut.open();
-		    Ride r=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUsername);
+		    //Ride r=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUsername);
+			 dbManager.open();
+			 RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+			 Ride r = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();
 			
 			assertNull(r);
@@ -186,7 +196,10 @@ public class CreateRideMockWhiteTest {
 				
 				//invoke System Under Test (sut)  
 				sut.open();
-				Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUserName);
+				 dbManager.open();
+				 RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+				 Ride ride = dbManager.createRide(rideDetails, driverUserName);
+
 
 				//verify the results
 				assertNull(ride);
@@ -240,9 +253,11 @@ public class CreateRideMockWhiteTest {
 			
 			//invoke System Under Test (sut)  
 			sut.open();
-		    sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUsername);
+			 dbManager.open();
+			 RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+			 dbManager.createRide(rideDetails, driverUsername);
 			sut.close();
-			
+			 
 			fail();
 			
 		   } catch (RideAlreadyExistException e) {
@@ -285,7 +300,10 @@ public class CreateRideMockWhiteTest {
 					
 			//invoke System Under Test (sut)  
 			sut.open();
-			Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUsername);
+			 dbManager.open();
+			 RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+			 Ride ride = dbManager.createRide(rideDetails, driverUsername);
+
 			sut.close();
 			//verify the results
 			assertNotNull(ride);

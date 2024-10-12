@@ -23,13 +23,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import dataAccess.DataAccess;
+import dataAccess.RideDetails;
 import domain.Driver;
 import domain.Ride;
 import exceptions.RideAlreadyExistException;
 import exceptions.RideMustBeLaterThanTodayException;
 
 public class CreateRideMockBlackTest {
-	
+	DataAccess dbManager;
 	static DataAccess sut; 
 	
 	protected MockedStatic<Persistence> persistenceMock;
@@ -90,7 +91,10 @@ public class CreateRideMockBlackTest {
 						
 				//invoke System Under Test (sut)  
 				sut.open();
-				Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+				//Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+				dbManager.open();
+			    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			    Ride ride = dbManager.createRide(rideDetails, driverUsername);
 				sut.close();
 				//verify the results
 				assertNotNull(ride);
@@ -137,7 +141,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -183,7 +190,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -225,7 +235,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -270,7 +283,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, -2, 0, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, -2, 0, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, -2, 0);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -317,7 +333,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, -10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, -10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, -10);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -365,7 +384,10 @@ public class CreateRideMockBlackTest {
 				
 				//invoke System Under Test (sut)  
 				sut.open();
-				Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUserName);
+				//Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 0, 0, driverUserName);
+				dbManager.open();
+			    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 0, 0);
+			    Ride ride = dbManager.createRide(rideDetails, driverUserName);
 
 				//verify the results
 				assertNull(ride);
@@ -419,7 +441,10 @@ public class CreateRideMockBlackTest {
 			
 			//invoke System Under Test (sut)  
 			sut.open();
-		    sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+		    //sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+		    dbManager.createRide(rideDetails, driverUsername);
 			sut.close();
 			
 			fail();
@@ -459,7 +484,10 @@ public class CreateRideMockBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideFrom, rideDate, 2, 10, driverUsername);
+			//ride=sut.createRide(rideFrom, rideFrom, rideDate, 2, 10, driverUsername)
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideFrom, rideDate, 2, 10);
+		    ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -513,7 +541,10 @@ public class CreateRideMockBlackTest {
 			
 			//invoke System Under Test (sut)  
 			sut.open();
-		    sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+		    //sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+		    RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+		    dbManager.createRide(rideDetails, driverUsername);
 			sut.close();
 			
 			fail();

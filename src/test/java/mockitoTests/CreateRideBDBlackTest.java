@@ -13,6 +13,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import dataAccess.DataAccess;
+import dataAccess.RideDetails;
 import domain.Ride;
 import exceptions.RideAlreadyExistException;
 import exceptions.RideMustBeLaterThanTodayException;
@@ -20,6 +21,7 @@ import testOperations.TestDataAccess;
 import domain.Driver;
 
 public class CreateRideBDBlackTest {
+		DataAccess dbManager;
 
 	 //sut:system under test
 	 static DataAccess sut=new DataAccess();
@@ -58,7 +60,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -118,7 +123,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -176,7 +184,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -226,7 +237,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			// ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -284,7 +298,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, -2, 0, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, -2, 0, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -346,7 +363,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideTo, rideDate, 2, -10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, -10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -410,7 +430,10 @@ public class CreateRideBDBlackTest {
 				
 				//invoke System Under Test (sut)  
 				sut.open();
-			    ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			    //ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+				dbManager.open();
+				RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+				ride = dbManager.createRide(rideDetails, driverUsername);
 
 				//verify the results
 				assertNull(ride);
@@ -465,7 +488,10 @@ public class CreateRideBDBlackTest {
 			
 			//invoke System Under Test (sut)  
 			sut.open();
-		    sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+		    //sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			dbManager.createRide(rideDetails, driverUsername);
 			sut.close();
 			
 			fail();
@@ -512,7 +538,10 @@ public class CreateRideBDBlackTest {
 		try {
 			//invoke System Under Test (sut)  
 			sut.open();
-			 ride=sut.createRide(rideFrom, rideFrom, rideDate, 2, 10, driverUsername);
+			 //ride=sut.createRide(rideFrom, rideFrom, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideFrom, rideDate, 2, 10);
+			ride = dbManager.createRide(rideDetails, driverUsername);
 			sut.close();			
 			
 			//verify the results
@@ -579,7 +608,10 @@ public class CreateRideBDBlackTest {
 			
 			//invoke System Under Test (sut)  
 			sut.open();
-			Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			//Ride ride=sut.createRide(rideFrom, rideTo, rideDate, 2, 10, driverUsername);
+			dbManager.open();
+			RideDetails rideDetails = new RideDetails(rideFrom, rideTo, rideDate, 2, 10);
+			Ride ride = dbManager.createRide(rideDetails, driverUsername);
 			
 
 			sut.close();

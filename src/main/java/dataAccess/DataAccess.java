@@ -34,6 +34,7 @@ public class DataAccess {
 	private static final String BF = "BookFreeze";
 	private static final String US = "username";
 	private static final String QUERY_DRIVER_BY_USERNAME = "SELECT d FROM Driver d WHERE d.username = :username";
+	
 	ConfigXML c = ConfigXML.getInstance();
 	private static final Logger logger = Logger.getLogger(DataAccess.class.getName());
 	private String adminPass="admin";
@@ -183,6 +184,10 @@ public class DataAccess {
 			db.getTransaction().rollback();
 		}
 	}
+	
+	private String buildSelectQuery(String entityName, String whereClause) {
+	    return "SELECT e FROM " + entityName + " e WHERE " + whereClause;
+	}
 
 	/**
 	 * This method returns all the cities where rides depart
@@ -222,35 +227,40 @@ public class DataAccess {
 	 * @throws RideAlreadyExistException         if the same ride already exists for
 	 *                                           the driver
 	 */
-	public Ride createRide(String from, String to, Date date, int nPlaces, float price, String driverName)
-			throws RideAlreadyExistException, RideMustBeLaterThanTodayException {
-		logger.info(
-		">> DataAccess: createRide=> from= " + from + " to= " + to + " driver=" + driverName + " date " + date);
-		if (driverName==null) return null;
-		try {
-			if (new Date().compareTo(date) > 0) {
-				logger.info("ppppp");
-				throw new RideMustBeLaterThanTodayException(
-						ResourceBundle.getBundle("Etiquetas").getString("CreateRideGUI.ErrorRideMustBeLaterThanToday"));
-			}
+	public Ride createRide(RideDetails rideDetails, String driverName)
+	        throws RideAlreadyExistException, RideMustBeLaterThanTodayException {
+	    logger.info(
+	            ">> DataAccess: createRide=> from= " + rideDetails.getFrom() +
+	            " to= " + rideDetails.getTo() + " driver=" + driverName + " date " + rideDetails.getDate());
 
-			db.getTransaction().begin();
-			Driver driver = db.find(Driver.class, driverName);
-			if (driver.doesRideExists(from, to, date)) {
-				db.getTransaction().commit();
-				throw new RideAlreadyExistException(
-						ResourceBundle.getBundle("Etiquetas").getString("DataAccess.RideAlreadyExist"));
-			}
-			Ride ride = driver.addRide(from, to, date, nPlaces, price);
-			// next instruction can be obviated
-			db.persist(driver);
-			db.getTransaction().commit();
+	    if (driverName == null) return null;
 
-			return ride;
-		} catch (NullPointerException e) {
-			return null;
-		}
+	    try {
+	        if (new Date().compareTo(rideDetails.getDate()) > 0) {
+	            logger.info("ppppp");
+	            throw new RideMustBeLaterThanTodayException(
+	                    ResourceBundle.getBundle("Etiquetas").getString("CreateRideGUI.ErrorRideMustBeLaterThanToday"));
+	        }
+
+	        db.getTransaction().begin();
+	        Driver driver = db.find(Driver.class, driverName);
+	        if (driver.doesRideExists(rideDetails.getFrom(), rideDetails.getTo(), rideDetails.getDate())) {
+	            db.getTransaction().commit();
+	            throw new RideAlreadyExistException(
+	                    ResourceBundle.getBundle("Etiquetas").getString("DataAccess.RideAlreadyExist"));
+	        }
+
+	        Ride ride = driver.addRide(rideDetails.getFrom(), rideDetails.getTo(), rideDetails.getDate(),
+	                rideDetails.getNPlaces(), rideDetails.getPrice());
+	        db.persist(driver);
+	        db.getTransaction().commit();
+
+	        return ride;
+	    } catch (NullPointerException e) {
+	        return null;
+	    }
 	}
+
 
 	/**
 	 * This method retrieves the rides from two locations on a given date
@@ -332,9 +342,11 @@ public class DataAccess {
 	}
 
 	public User getUser(String erab) {
-		TypedQuery<User> query = db.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
-		query.setParameter(US, erab);
-		return query.getSingleResult();
+	    String whereClause = "e.username = :username";
+	    String queryString = buildSelectQuery("User", whereClause);
+	    TypedQuery<User> query = db.createQuery(queryString, User.class);
+	    query.setParameter("username", erab);
+	    return query.getSingleResult();
 	}
 
 	public double getActualMoney(String erab) {
@@ -369,15 +381,12 @@ public class DataAccess {
 	}
 
 	public Driver getDriver(String erab) {
-		
-		TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME, Driver.class);
-		query.setParameter(US, erab);
-		List<Driver> resultList = query.getResultList();
-		if (resultList.isEmpty()) {
-			return null;
-		} else {
-			return resultList.get(0);
-		}
+	    String whereClause = "e.username = :username";
+	    String queryString = buildSelectQuery("Driver", whereClause);
+	    TypedQuery<Driver> query = db.createQuery(queryString, Driver.class);
+	    query.setParameter("username", erab);
+	    List<Driver> resultList = query.getResultList();
+	    return resultList.isEmpty() ? null : resultList.get(0);
 	}
 
 	public Traveler getTraveler(String erab) {
@@ -391,7 +400,7 @@ public class DataAccess {
 			return resultList.get(0);
 		}
 	}
-
+ 
 	public String getMotabyUsername(String erab) {
 		TypedQuery<String> driverQuery = db.createQuery("SELECT d.mota FROM Driver d WHERE d.username = :username",
 				String.class);
@@ -614,20 +623,10 @@ public class DataAccess {
 	public List<Booking> getBookingFromDriver(String username) {
 		try {
 			db.getTransaction().begin();
-			TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME,
-					Driver.class);
-			query.setParameter(US, username);
-			Driver driver = query.getSingleResult();
-
+			Driver driver = getDriverByUsername(username);
 			List<Ride> rides = driver.getCreatedRides();
-			List<Booking> bookings = new ArrayList<>();
 
-			for (Ride ride : rides) {
-				if (ride.isActive()) {
-					bookings.addAll(ride.getBookings());
-				}
-			}
-
+			List<Booking> bookings = getActiveBookingsFromRides(rides);
 			db.getTransaction().commit();
 			return bookings;
 		} catch (Exception e) {
@@ -636,7 +635,24 @@ public class DataAccess {
 			return null;
 		}
 	}
+	
+	private Driver getDriverByUsername(String username) {
+		TypedQuery<Driver> query = db.createQuery(QUERY_DRIVER_BY_USERNAME, Driver.class);
+		query.setParameter(US, username);
+		return query.getSingleResult();
+	}
+	
+	private List<Booking> getActiveBookingsFromRides(List<Ride> rides) {
+		List<Booking> bookings = new ArrayList<>();
+		for (Ride ride : rides) {
+			if (ride.isActive()) {
+				bookings.addAll(ride.getBookings());
+			}
+		}
+		return bookings;
+	}
 
+ 
 	public void cancelRide(Ride ride) {
 		try {
 			db.getTransaction().begin();
@@ -930,46 +946,62 @@ public class DataAccess {
 	}
 
 	public boolean updateAlertaAurkituak(String username) {
-		try {
-			db.getTransaction().begin();
+	    try {
+	        db.getTransaction().begin();
 
-			boolean alertFound = false;
-			TypedQuery<Alert> alertQuery = db.createQuery("SELECT a FROM Alert a WHERE a.traveler.username = :username",
-					Alert.class);
-			alertQuery.setParameter(US, username);
-			List<Alert> alerts = alertQuery.getResultList();
+	        List<Alert> alerts = getAlertsByUsername(username);
+	        List<Ride> rides = getActiveRides();
 
-			TypedQuery<Ride> rideQuery = db
-					.createQuery("SELECT r FROM Ride r WHERE r.date > CURRENT_DATE AND r.active = true", Ride.class);
-			List<Ride> rides = rideQuery.getResultList();
+	        boolean alertFound = processAlerts(alerts, rides);
 
-			for (Alert alert : alerts) {
-				boolean found = false;
-				for (Ride ride : rides) {
-					if (UtilDate.datesAreEqualIgnoringTime(ride.getDate(), alert.getDate())
-							&& ride.getFrom().equals(alert.getFrom()) && ride.getTo().equals(alert.getTo())
-							&& ride.getnPlaces() > 0) {
-						alert.setFound(true);
-						found = true;
-						if (alert.isActive())
-							alertFound = true;
-						break;
-					}
-				}
-				if (!found) {
-					alert.setFound(false);
-				}
-				db.merge(alert);
-			}
-
-			db.getTransaction().commit();
-			return alertFound;
-		} catch (Exception e) {
-			e.printStackTrace();
-			db.getTransaction().rollback();
-			return false;
-		}
+	        db.getTransaction().commit();
+	        return alertFound;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        db.getTransaction().rollback();
+	        return false;
+	    }
 	}
+
+	private List<Ride> getActiveRides() {
+	    TypedQuery<Ride> rideQuery = db.createQuery(
+	            "SELECT r FROM Ride r WHERE r.date > CURRENT_DATE AND r.active = true", Ride.class);
+	    return rideQuery.getResultList();
+	}
+
+	private boolean processAlerts(List<Alert> alerts, List<Ride> rides) {
+	    boolean alertFound = false;
+
+	    for (Alert alert : alerts) {
+	        boolean found = checkAlertInRides(alert, rides);
+	        alert.setFound(found);
+	        
+	        if (found && alert.isActive()) {
+	            alertFound = true;
+	        }
+	        
+	        db.merge(alert);
+	    }
+
+	    return alertFound;
+	}
+
+	private boolean checkAlertInRides(Alert alert, List<Ride> rides) {
+	    for (Ride ride : rides) {
+	        if (isMatchingRide(ride, alert)) {
+	            return true; // Alert found
+	        }
+	    }
+	    return false; // Alert not found
+	}
+
+	private boolean isMatchingRide(Ride ride, Alert alert) {
+	    return UtilDate.datesAreEqualIgnoringTime(ride.getDate(), alert.getDate())
+	            && ride.getFrom().equals(alert.getFrom())
+	            && ride.getTo().equals(alert.getTo())
+	            && ride.getnPlaces() > 0;
+	}
+
 
 	public boolean createAlert(Alert alert) {
 		try {
