@@ -38,6 +38,11 @@ public interface BLFacade {
 	 * @return all the arrival destinations
 	 */
 	@WebMethod
+	public ExtendedIterator<String> getDepartingCitiesIterator();
+	
+	
+	
+	@WebMethod
 	public List<String> getDestinationCities(String from);
 
 	/**

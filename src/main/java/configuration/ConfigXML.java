@@ -38,8 +38,6 @@ public class ConfigXML {
 	
 	private int databasePort;
 	
-
-	
 	private String user;
 	
 	private String password;
@@ -167,5 +165,11 @@ public class ConfigXML {
 	public String getDatabaseNode() {
 		return databaseNode;
 	}
+
+	public void setDatabaseLocal(boolean databaseLocal) {
+		this.databaseLocal = databaseLocal;
+	}
+
+
 
 }

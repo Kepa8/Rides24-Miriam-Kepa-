@@ -1,16 +1,10 @@
 package gui;
 
-import java.net.URL;
 import java.util.Locale;
 
-import javax.swing.UIManager;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-
 import businesslogic.BLFacade;
-import businesslogic.BLFacadeImplementation;
+import businesslogic.BLFactory;
 import configuration.ConfigXML;
-import dataAccess.DataAccess;
 
 public class ApplicationLauncher {
 
@@ -25,10 +19,10 @@ public class ApplicationLauncher {
 		System.out.println("Locale: " + Locale.getDefault());
 
 		try {
+			BLFactory factory = new BLFactory();
 
-			BLFacade appFacadeInterface;
+/*			
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-
 			if (c.isBusinessLogicLocal()) {
 
 				DataAccess da = new DataAccess();
@@ -51,7 +45,7 @@ public class ApplicationLauncher {
 
 				appFacadeInterface = service.getPort(BLFacade.class);
 			}
-
+*/			BLFacade appFacadeInterface = factory.createBLFacade();
 			MainGUI.setBussinessLogic(appFacadeInterface);
 			MainGUI a = new MainGUI();
 			a.setVisible(true);
