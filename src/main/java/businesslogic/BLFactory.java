@@ -9,14 +9,18 @@ import configuration.ConfigXML;
 import dataAccess.DataAccess;
 
 public class BLFactory {
+    private ConfigXML config;
+    private BLFacade businessLogicLocal;
+    public BLFactory(ConfigXML config) {
+        this.config = config;
+    }
+
     public BLFacade createBLFacade() {
-        ConfigXML c = ConfigXML.getInstance();
-        if (c.isBusinessLogicLocal()) {
+        if (config.isBusinessLogicLocal()) {
             DataAccess da = new DataAccess();
             return new BLFacadeImplementation(da);
         } else {
-            // Implementación remota
-            String serviceName = "http://" + c.getBusinessLogicNode() + ":" + c.getBusinessLogicPort() + "/ws/" + c.getBusinessLogicName() + "?wsdl";
+            String serviceName = "http://" + config.getBusinessLogicNode() + ":" + config.getBusinessLogicPort() + "/ws/" + config.getBusinessLogicName() + "?wsdl";
             try {
                 URL url = new URL(serviceName);
                 QName qname = new QName("http://businesslogic/", "BLFacadeImplementationService");
@@ -27,10 +31,17 @@ public class BLFactory {
             }
         }
     }
-    
-    
-    
-    
-    
-    
+
+    public BLFacade getBusinessLogicFactory(boolean isLocal) {
+        if (isLocal) {
+            // Crear BLFacade como local
+            if (businessLogicLocal == null) {
+                businessLogicLocal = createBLFacade();
+            }
+            return businessLogicLocal;
+        } else {
+            // Crear BLFacade como remoto (si se requiere)
+            return createBLFacade();
+        }
+    }
 }

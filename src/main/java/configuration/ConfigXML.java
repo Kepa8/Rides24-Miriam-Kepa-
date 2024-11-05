@@ -169,7 +169,4 @@ public class ConfigXML {
 	public void setDatabaseLocal(boolean databaseLocal) {
 		this.databaseLocal = databaseLocal;
 	}
-
-
-
 }

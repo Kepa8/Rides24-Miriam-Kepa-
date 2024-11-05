@@ -2,6 +2,7 @@ package businesslogic;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -52,10 +53,10 @@ public class BLFacadeImplementation implements BLFacade {
 	 * {@inheritDoc}
 	 */
 	@WebMethod
-	public List<String> getDepartCities() {
+	public Vector<String> getDepartCities() {
 		dbManager.open();
 
-		List<String> departLocations = dbManager.getDepartCities();
+		Vector<String> departLocations = (Vector<String>) dbManager.getDepartCities();
 
 		dbManager.close();
 

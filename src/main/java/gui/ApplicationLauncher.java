@@ -19,7 +19,7 @@ public class ApplicationLauncher {
 		System.out.println("Locale: " + Locale.getDefault());
 
 		try {
-			BLFactory factory = new BLFactory();
+			BLFactory factory = new BLFactory(c);
 
 /*			
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -45,7 +45,8 @@ public class ApplicationLauncher {
 
 				appFacadeInterface = service.getPort(BLFacade.class);
 			}
-*/			BLFacade appFacadeInterface = factory.createBLFacade();
+*/			
+			BLFacade appFacadeInterface = factory.createBLFacade();
 			MainGUI.setBussinessLogic(appFacadeInterface);
 			MainGUI a = new MainGUI();
 			a.setVisible(true);
