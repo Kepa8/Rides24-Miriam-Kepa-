@@ -2,7 +2,7 @@ package businesslogic;
 
 import java.util.Iterator;
 
-public interface ExtendedIterator<Object>	extends Iterator<Object>	{
+public interface ExtendedIterator<Object> extends Iterator<Object>	{
 	//return	the	actual	element	and	go	to	the	previous
 	public Object	previous();
 	//true	if	ther	is	a	previous	element
